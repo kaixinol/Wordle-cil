@@ -11,7 +11,7 @@ Play Wordle on the command line.
 [![HZdjPS.png](https://s4.ax1x.com/2022/02/04/HZdjPS.png)](https://imgtu.com/i/HZdjPS)
 ## Usage
 - `--help`
-- `-nohinfixft`
+- `-nohint`
 ## Build
 g++ start.cpp -std=c++11 -o Wordle_of_space.bin
 
