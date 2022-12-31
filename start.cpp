@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
+#include <termios.h>
+#include <unistd.h>
 #include "color.h"
 using namespace std;
 int main(int argc, char **argv)
@@ -13,6 +15,7 @@ int main(int argc, char **argv)
   std::vector<std::string> split(const std::string &str, const std::string &pattern);
   int getrandomnum(void);
   bool allletter(string s);
+  int getch(void);
   if (argc > 1 && strcmp(argv[1], "--help") == 0)
   {
     cout << "Usage :" << endl;
@@ -183,18 +186,43 @@ sphere
     cout << endl
          << "Guess " + to_string(i) + "/6:";
     string s;
-    getline(cin, s);
-    if (s.size() == 0)
+    while (s.size() != vec[Num].size())
+    {
+      char temp = getch();
+      if (temp == 10)
+      {
+        if (!s.empty() && s.size() < vec[Num].size())
+        {
+          const int e = (vec[Num].size() - s.size());
+          for (int l = 0; l != e; ++l)
+          {
+            s += "?";
+          }
+        }
+        break;
+      }
+      // cout << '(' << (int)temp << ')';
+      if (temp >= 65 && temp <= 90)
+      {
+        cout << temp;
+        s += temp;
+      }
+      if (temp == 127)
+      {
+        if (!s.empty())
+        {
+          for (int ii = 0; ii != (int)s.size(); ++ii)
+            cout << '\b';
+          s = "";
+        }
+      }
+    }
+    if (s.empty())
     {
       i--;
       continue;
     }
-    if (!allletter(s) || s.size() != vec[Num].size())
-    {
-      CPrint(B_RED, F_WHITE, "invalid");
-      i--;
-      continue;
-    }
+    cout << endl;
     static int IsCorrect = 0;
     stream.clear();
     for (int ii = 0; ii < (int)s.size(); ++ii)
@@ -227,10 +255,22 @@ sphere
   }
   cout << endl
        << "❗CORRECT:" << vec[Num];
-  cin.get();
+  exit(1);
 }
 
 void CPrint(int bg, int ft, string str) { cout << "\033[" + to_string(ft) + ";" + to_string(bg) + "m" + str + "\033[0m"; }
+int getch(void)
+{
+  struct termios oldattr, newattr;
+  int ch;
+  tcgetattr(STDIN_FILENO, &oldattr);
+  newattr = oldattr;
+  newattr.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
+  ch = getchar();
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
+  return ch;
+}
 bool in(string str, char num)
 {
   stringstream s;
@@ -259,14 +299,4 @@ int getrandomnum()
 {
   srand((int)time(NULL));
   return rand() % 40; // 0 TO 40
-}
-bool allletter(string s)
-{
-  int ii = 0;
-  for (int i = 0; i < (int)s.size(); ++i)
-    if (s[i] > 64 && s[i] < 91)
-    {
-      ii++;
-    }
-  return ii == (int)s.size();
 }
