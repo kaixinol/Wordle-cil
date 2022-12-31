@@ -1,22 +1,24 @@
-#include<iostream>
-#include<sstream>
-#include<vector>
-#include<cstdlib>
-#include<cstring>
-#include<algorithm>
-#include"color.h"
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <cstdlib>
+#include <cstring>
+#include <algorithm>
+#include "color.h"
 using namespace std;
-int main(int argc,char** argv){
-void CPrint(int bg,int ft,string str);
-bool in(string str,char num);
-std::vector<std::string> split(const std::string &str,const std::string &pattern);
-int getrandomnum();
-bool allletter(string s);
-if(argc>1&&strcmp(argv[1],"--help")==0){
-cout<<"Usage :"<<endl;
-cout<<"\t--help for help"<<endl;
-cout<<"\t-nohint hide hints"<<endl;
-cout<<R"(
+int main(int argc, char **argv)
+{
+  void CPrint(int bg, int ft, string str);
+  bool in(string str, char num);
+  std::vector<std::string> split(const std::string &str, const std::string &pattern);
+  int getrandomnum(void);
+  bool allletter(string s);
+  if (argc > 1 && strcmp(argv[1], "--help") == 0)
+  {
+    cout << "Usage :" << endl;
+    cout << "\t--help for help" << endl;
+    cout << "\t-nohint hide hints" << endl;
+    cout << R"(
                                                         ;r:                                        
                                                        T8L8@i                                      
                                    ;ii...              v@  L@8                                     
@@ -25,7 +27,8 @@ cout<<R"(
                               i@C   .               ;TG@E  ..  ,tp8J  p@;.8L                       
               i0@8@8@Msc..      pD.  ......... . .        ....    v8@8@  8#    ..,:iTUUTJti.       
             t@8#SttsIIp#8@8#q:   L8; ................ . .........  .$q  .@8iE#888@8@8#8@#b888c     
-           t@8LLcJJTvTtxL,,$@8#qstbi .............................      ;8#bRpU;:vccLcLLirTeq8@,   
+           t@8LLcJJTvTtxL,,$@8#qstbi ..........
+           ...................      ;8#bRpU;:vccLcLLirTeq8@,   
            @8vLcTTsTttsr,i#pL.      ... ............................. . .tTLcvJ,issvTcTLxp#GcL8@   
            8#ILstCxzxL;;:v@8xi   . . .   ..............................  UtsTzr;LUTTJJLT#bxcLiS8C  
           ;@#uTiTcii;;;;:;NEL:  . .    L: .............................  vIsxti;ixtTvcGbpccJTrT@8  
@@ -64,10 +67,11 @@ cout<<R"(
         @8IueESE2ESEeE2E2EeE2ECz$8bUzM8@tM#8pUSESeS2u8@Ss@@0C2SE2ESESE2ESEeEzub8@:,txtxUxCtUzCtItT;
         8@#IGEGONOGENOGENOGEGOO2SD88SS8@2M88#uGONEGESb8pUb88M2OOGEGOGONONOGOOIE#8N,iuCUtCtxtCtzxzUU
         ,8bzvsssTtTtTtTtTtTtTtTtccq#scMbLJDbDJvtTsssL2buitb#tTTtTtTtstTtstTsTsLE8#..,::LiLiiiLiriLi
-)";exit(1);
-}
+)";
+    exit(1);
+  }
 
-string words=R"(
+  string words = R"(
 Earth
 moon
 sun
@@ -110,9 +114,9 @@ space
 spaceship
 sphere
 )";
-vector<string>vec=split(words,"\n");
-cout<<"\033]0;Wordle  of  space\007";
-CPrint(B_BLACK,F_BLUE,R"(
+  vector<string> vec = split(words, "\n");
+  cout << "\033]0;Wordle  of  space\007";
+  CPrint(B_BLACK, F_BLUE, R"(
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%@@@%@@@@@@@@
 @@@%@@@@@@@@@@@%@@@%%@@@@%%%@%@%@%%@%%%%%%%%%%%%%%@@@@@%%@%@
 @@@@@@@@@@@@%@@%%@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,77 +152,121 @@ CPrint(B_BLACK,F_BLUE,R"(
       BP   rB   BQ  :B.  XBBBBBB: UBDdPBE PB   BL  uB  qBDQB7 7QBdQB. 
       
 		[Press ENTER to continue.]
-)"); 
-cin.get();
-system("clear");
-cout<<"Let's play a game of Wordle\n";
-stringstream stream;
-int Num=getrandomnum();
-transform(vec[Num].begin(), vec[Num].end(), vec[Num].begin(), ::toupper);
-cout<<"Word length:"+to_string(vec[Num].size())<<endl;
-const char*cmpstr=vec[Num].c_str();
-if(argc==1){
-for(int i=0;i<26;i++)
-{
-stream << (char)('A'+i);
-if(in(vec[Num],'A'+i))
-{CPrint(B_GREEN,F_BLACK,stream.str());}
-else
-{CPrint(B_BLACK,F_WHITE,stream.str());}
-stream.clear();
-stream.str("");
-}}
-for(int i=1;i<7;++i){
-cout<<endl<<"Guess "+to_string(i)+"/6:";
-string s;
-getline(cin,s);
-if(s.size()==0){i--;continue;}
-if(!allletter(s) || s.size()!=vec[Num].size()){CPrint(B_RED,F_WHITE,"invalid");i--;continue;}
-static int IsCorrect=0;
-for(int ii=0;ii<s.size();++ii){
-stringstream stream;
-stream << s[ii];
-if(in(vec[Num],s[ii])&&s[ii]==cmpstr[ii]){CPrint(B_BLACK,F_GREEN,stream.str());IsCorrect++;}
-//else if(ii+1>vec[Num].size()){CPrint(B_RED,F_WHITE,stream.str());}
-else if((in(vec[Num],s[ii])&&s[ii]!=cmpstr[ii])){CPrint(B_BLACK,F_YELLOW,stream.str());}
-else{CPrint(B_RED,F_BLACK,stream.str());}
-if(IsCorrect==vec[Num].size()){cout<<endl<<"👀 IMPRESSIVE!";exit(0);}
-stream.clear();
-stream.str("");
-
-}
-IsCorrect=0;
-}
-cout<<endl<<"❗CORRECT:"<<vec[Num];
-cin.get();
-}
-
-void CPrint(int bg,int ft,string str){cout<<"\033["+to_string(ft)+";"+to_string(bg)+"m"+str+"\033[0m";}
-bool in(string str,char num){
-stringstream stream;
-stream << (char)(num);
-return str.find(stream.str())==string::npos?false:true;
-}
-
-std::vector<std::string> split(const std::string &str,const std::string &pattern)
-{
-    //const char* convert to char*
-    char * strc = new char[strlen(str.c_str())+1];
-    strcpy(strc, str.c_str());
-    std::vector<std::string> resultVec;
-    char* tmpStr = strtok(strc, pattern.c_str());
-    while (tmpStr != NULL)
+)");
+  cin.get();
+  system("clear");
+  cout << "Let's play a game of Wordle\n";
+  stringstream stream;
+  int Num = getrandomnum();
+  transform(vec[Num].begin(), vec[Num].end(), vec[Num].begin(), ::toupper);
+  cout << "Word length:" + to_string(vec[Num].size()) << endl;
+  const char *cmpstr = vec[Num].c_str();
+  if (argc == 1)
+  {
+    for (int i = 0; i < 26; i++)
     {
-        resultVec.push_back(std::string(tmpStr));
-        tmpStr = strtok(NULL, pattern.c_str());
+      stream << (char)('A' + i);
+      if (in(vec[Num], 'A' + i))
+      {
+        CPrint(B_GREEN, F_BLACK, stream.str());
+      }
+      else
+      {
+        CPrint(B_BLACK, F_WHITE, stream.str());
+      }
+      stream.clear();
+      stream.str("");
     }
-    
-    delete[] strc;
-    
-    return resultVec;
+  }
+  for (int i = 1; i < 7; ++i)
+  {
+    cout << endl
+         << "Guess " + to_string(i) + "/6:";
+    string s;
+    getline(cin, s);
+    if (s.size() == 0)
+    {
+      i--;
+      continue;
+    }
+    if (!allletter(s) || s.size() != vec[Num].size())
+    {
+      CPrint(B_RED, F_WHITE, "invalid");
+      i--;
+      continue;
+    }
+    static int IsCorrect = 0;
+    stream.clear();
+    for (int ii = 0; ii < (int)s.size(); ++ii)
+    {
+      stream << s[ii];
+      if (in(vec[Num], s[ii]) && s[ii] == cmpstr[ii])
+      {
+        CPrint(B_BLACK, F_GREEN, stream.str());
+        IsCorrect++;
+      }
+      // else if(ii+1>vec[Num].size()){CPrint(B_RED,F_WHITE,stream.str());}
+      else if ((in(vec[Num], s[ii]) && s[ii] != cmpstr[ii]))
+      {
+        CPrint(B_BLACK, F_YELLOW, stream.str());
+      }
+      else
+      {
+        CPrint(B_RED, F_BLACK, stream.str());
+      }
+      if (IsCorrect == (int)vec[Num].size())
+      {
+        cout << endl
+             << "👀 IMPRESSIVE!";
+        exit(0);
+      }
+      stream.clear();
+      stream.str("");
+    }
+    IsCorrect = 0;
+  }
+  cout << endl
+       << "❗CORRECT:" << vec[Num];
+  cin.get();
 }
-int getrandomnum(){
-srand((int)time(NULL));
-return rand()%40; //0 TO 40
+
+void CPrint(int bg, int ft, string str) { cout << "\033[" + to_string(ft) + ";" + to_string(bg) + "m" + str + "\033[0m"; }
+bool in(string str, char num)
+{
+  stringstream s;
+  s << (char)(num);
+  return str.find(s.str()) == string::npos ? false : true;
 }
-bool allletter(string s){int ii=0;for(int i=0;i<s.size();++i)if(s[i]>64&&s[i]<91){ii++;}return ii==s.size();}
+
+std::vector<std::string> split(const std::string &str, const std::string &pattern)
+{
+  // const char* convert to char*
+  char *strc = new char[strlen(str.c_str()) + 1];
+  strcpy(strc, str.c_str());
+  std::vector<std::string> resultVec;
+  char *tmpStr = strtok(strc, pattern.c_str());
+  while (tmpStr != NULL)
+  {
+    resultVec.push_back(std::string(tmpStr));
+    tmpStr = strtok(NULL, pattern.c_str());
+  }
+
+  delete[] strc;
+
+  return resultVec;
+}
+int getrandomnum()
+{
+  srand((int)time(NULL));
+  return rand() % 40; // 0 TO 40
+}
+bool allletter(string s)
+{
+  int ii = 0;
+  for (int i = 0; i < (int)s.size(); ++i)
+    if (s[i] > 64 && s[i] < 91)
+    {
+      ii++;
+    }
+  return ii == (int)s.size();
+}
